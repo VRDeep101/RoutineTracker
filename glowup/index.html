@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLOW UP OS</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- ONBOARDING MODAL -->
+<div id="onboardingModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box onboarding">
+    <div class="ob-step" id="ob1">
+      <div class="ob-icon">⚡</div>
+      <h2>Welcome to GLOW UP OS</h2>
+      <p>Your personal transformation dashboard. Built for one mission — becoming extraordinary.</p>
+      <button class="btn-primary" onclick="obNext(2)">Let's Go →</button>
+    </div>
+    <div class="ob-step" id="ob2" style="display:none;">
+      <div class="ob-icon">👤</div>
+      <h2>What's your name?</h2>
+      <input type="text" id="obName" class="ob-input" placeholder="Enter your name" maxlength="30">
+      <button class="btn-primary" onclick="obNext(3)">Next →</button>
+    </div>
+    <div class="ob-step" id="ob3" style="display:none;">
+      <div class="ob-icon">⚖️</div>
+      <h2>Current weight?</h2>
+      <input type="number" id="obWeight" class="ob-input" placeholder="e.g. 50" min="30" max="200">
+      <span class="ob-unit">kg</span>
+      <button class="btn-primary" onclick="obNext(4)">Next →</button>
+    </div>
+    <div class="ob-step" id="ob4" style="display:none;">
+      <div class="ob-icon">🔑</div>
+      <h2>Groq API Key (FREE)</h2>
+      <p class="ob-hint">For AI Daily Session. Get free key at <strong>console.groq.com</strong><br>Skip if you want to do it later.</p>
+      <input type="password" id="obApiKey" class="ob-input" placeholder="gsk_... (optional)">
+      <div style="display:flex;gap:12px;margin-top:1rem;">
+        <button class="btn-secondary" onclick="obFinish()">Skip for now</button>
+        <button class="btn-primary" onclick="obFinish()">Start My Journey 🚀</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="logo-icon">⚡</span>
+      <span class="logo-text">GLOW UP OS</span>
+    </div>
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+  </div>
+  <div class="user-info">
+    <div class="user-avatar" id="userAvatar">U</div>
+    <div class="user-details">
+      <div class="user-name" id="userName">User</div>
+      <div class="user-streak" id="userStreak">🔥 Day 1</div>
+    </div>
+  </div>
+  <nav class="nav-menu">
+    <a class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
+      <i class="fa fa-home"></i><span>Dashboard</span>
+    </a>
+    <a class="nav-item" onclick="showPage('tracker')" data-page="tracker">
+      <i class="fa fa-calendar-check"></i><span>Daily Tracker</span>
+    </a>
+    <a class="nav-item" onclick="showPage('nutrition')" data-page="nutrition">
+      <i class="fa fa-utensils"></i><span>Nutrition</span>
+    </a>
+    <a class="nav-item" onclick="showPage('gym')" data-page="gym">
+      <i class="fa fa-dumbbell"></i><span>Gym & Physical</span>
+    </a>
+    <a class="nav-item" onclick="showPage('hacking')" data-page="hacking">
+      <i class="fa fa-terminal"></i><span>Hacking Progress</span>
+    </a>
+    <a class="nav-item" onclick="showPage('reading')" data-page="reading">
+      <i class="fa fa-book"></i><span>Reading</span>
+    </a>
+    <a class="nav-item" onclick="showPage('mind')" data-page="mind">
+      <i class="fa fa-brain"></i><span>Mind & IQ</span>
+    </a>
+    <a class="nav-item" onclick="showPage('money')" data-page="money">
+      <i class="fa fa-indian-rupee-sign"></i><span>Money</span>
+    </a>
+    <a class="nav-item" onclick="showPage('ai')" data-page="ai">
+      <i class="fa fa-robot"></i><span>AI Session</span>
+    </a>
+    <a class="nav-item" onclick="showPage('stats')" data-page="stats">
+      <i class="fa fa-chart-line"></i><span>Stats</span>
+    </a>
+    <a class="nav-item" onclick="showPage('settings')" data-page="settings">
+      <i class="fa fa-gear"></i><span>Settings</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="phase-badge">Phase 1 — Foundation</div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+      <div class="page-title" id="pageTitle">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="live-clock" id="liveClock">00:00:00</div>
+      <div class="live-date" id="liveDate">--</div>
+    </div>
+  </div>
+
+  <!-- PAGES -->
+
+  <!-- DASHBOARD PAGE -->
+  <div id="page-dashboard" class="page active">
+    <div class="greeting" id="greeting">Good morning 👋</div>
+    <div class="quote-card" id="quoteCard">"Discipline is choosing what you want most over what you want now."</div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon" style="color:#4ade80"><i class="fa fa-fire"></i></div>
+        <div class="stat-val" id="dash-streak">0</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="color:#60a5fa"><i class="fa fa-droplet"></i></div>
+        <div class="stat-val"><span id="dash-water">0</span><small>L</small></div>
+        <div class="stat-label">Water / 4.5L</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="color:#c084fc"><i class="fa fa-shoe-prints"></i></div>
+        <div class="stat-val" id="dash-steps">0</div>
+        <div class="stat-label">Steps / 10k</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="color:#fbbf24"><i class="fa fa-moon"></i></div>
+        <div class="stat-val"><span id="dash-sleep">0</span><small>h</small></div>
+        <div class="stat-label">Sleep / 8.5h</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="color:#fb923c"><i class="fa fa-drumstick-bite"></i></div>
+        <div class="stat-val"><span id="dash-cal">0</span><small>cal</small></div>
+        <div class="stat-label">Calories / 2500</div>
+      </div>
+    </div>
+
+    <!-- Today's Completion Ring -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Today's Progress</div>
+        <div class="ring-container">
+          <canvas id="completionRing" width="160" height="160"></canvas>
+          <div class="ring-label">
+            <div class="ring-pct" id="ringPct">0%</div>
+            <div class="ring-sub">completed</div>
+          </div>
+        </div>
+        <div class="quick-actions">
+          <button class="qa-btn" onclick="showPage('tracker')"><i class="fa fa-check"></i> Log Habits</button>
+          <button class="qa-btn" onclick="showPage('nutrition')"><i class="fa fa-utensils"></i> Log Meal</button>
+          <button class="qa-btn" onclick="showPage('ai')"><i class="fa fa-robot"></i> AI Session</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Phase 1 — Foundation</div>
+        <div class="phase-progress-list">
+          <div class="phase-item">
+            <span>Hacking</span>
+            <div class="mini-bar"><div class="mini-fill" id="ph-hack" style="width:0%"></div></div>
+            <span id="ph-hack-pct">0%</span>
+          </div>
+          <div class="phase-item">
+            <span>Reading</span>
+            <div class="mini-bar"><div class="mini-fill" id="ph-read" style="background:#60a5fa;width:0%"></div></div>
+            <span id="ph-read-pct">0%</span>
+          </div>
+          <div class="phase-item">
+            <span>Gym</span>
+            <div class="mini-bar"><div class="mini-fill" id="ph-gym" style="background:#c084fc;width:0%"></div></div>
+            <span id="ph-gym-pct">0%</span>
+          </div>
+          <div class="phase-item">
+            <span>Money</span>
+            <div class="mini-bar"><div class="mini-fill" id="ph-money" style="background:#fbbf24;width:0%"></div></div>
+            <span id="ph-money-pct">0%</span>
+          </div>
+          <div class="phase-item">
+            <span>Mind</span>
+            <div class="mini-bar"><div class="mini-fill" id="ph-mind" style="background:#c084fc;width:0%"></div></div>
+            <span id="ph-mind-pct">0%</span>
+          </div>
+        </div>
+        <div class="today-focus">
+          <div class="focus-label">Today's Focus</div>
+          <div class="focus-text">TryHackMe — Linux Fundamentals Room 1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAILY TRACKER PAGE -->
+  <div id="page-tracker" class="page">
+    <div class="page-header">
+      <h2>Daily Tracker</h2>
+      <div class="tracker-date" id="trackerDate">--</div>
+    </div>
+
+    <div class="tracker-score-bar">
+      <span id="trackerScore">0 / 0 habits</span>
+      <div class="score-bar"><div class="score-fill" id="scoreFill" style="width:0%"></div></div>
+      <span id="trackerPct">0%</span>
+    </div>
+
+    <div class="habits-container" id="habitsContainer">
+      <!-- Rendered by JS -->
+    </div>
+
+    <div class="tracker-actions">
+      <button class="btn-primary" onclick="saveTracker()"><i class="fa fa-save"></i> Save Today</button>
+      <button class="btn-secondary" onclick="loadTracker()"><i class="fa fa-rotate-left"></i> Reset</button>
+    </div>
+  </div>
+
+  <!-- NUTRITION PAGE -->
+  <div id="page-nutrition" class="page">
+    <div class="page-header"><h2>Nutrition Tracker</h2></div>
+
+    <div class="macro-grid">
+      <div class="macro-card">
+        <div class="macro-title"><i class="fa fa-fire" style="color:#f87171"></i> Calories</div>
+        <div class="macro-val"><span id="cal-val">0</span> / 2500 kcal</div>
+        <input type="range" class="slider" min="0" max="3500" step="50" value="0" id="cal-slider" oninput="updateMacro('cal',this.value,2500)">
+        <div class="macro-bar"><div class="macro-fill red" id="cal-fill" style="width:0%"></div></div>
+      </div>
+      <div class="macro-card">
+        <div class="macro-title"><i class="fa fa-drumstick-bite" style="color:#4ade80"></i> Protein</div>
+        <div class="macro-val"><span id="prot-val">0</span>g / 275g</div>
+        <input type="range" class="slider" min="0" max="400" step="5" value="0" id="prot-slider" oninput="updateMacro('prot',this.value,275)">
+        <div class="macro-bar"><div class="macro-fill green" id="prot-fill" style="width:0%"></div></div>
+      </div>
+      <div class="macro-card">
+        <div class="macro-title"><i class="fa fa-wheat-awn" style="color:#fbbf24"></i> Carbs</div>
+        <div class="macro-val"><span id="carb-val">0</span>g / 325g</div>
+        <input type="range" class="slider" min="0" max="500" step="10" value="0" id="carb-slider" oninput="updateMacro('carb',this.value,325)">
+        <div class="macro-bar"><div class="macro-fill amber" id="carb-fill" style="width:0%"></div></div>
+      </div>
+      <div class="macro-card">
+        <div class="macro-title"><i class="fa fa-droplet" style="color:#60a5fa"></i> Fats</div>
+        <div class="macro-val"><span id="fat-val">0</span>g / 70g</div>
+        <input type="range" class="slider" min="0" max="150" step="5" value="0" id="fat-slider" oninput="updateMacro('fat',this.value,70)">
+        <div class="macro-bar"><div class="macro-fill blue" id="fat-fill" style="width:0%"></div></div>
+      </div>
+      <div class="macro-card">
+        <div class="macro-title"><i class="fa fa-bottle-water" style="color:#60a5fa"></i> Water</div>
+        <div class="macro-val"><span id="water-val">0.0</span>L / 4.5L</div>
+        <input type="range" class="slider" min="0" max="6" step="0.25" value="0" id="water-slider" oninput="updateMacro('water',this.value,4.5)">
+        <div class="macro-bar"><div class="macro-fill blue" id="water-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- Meal Log -->
+    <div class="card" style="margin-top:1.5rem;">
+      <div class="card-title">Meal Log</div>
+      <div class="meal-sections" id="mealSections">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <div style="margin-top:1rem;">
+      <button class="btn-primary" onclick="saveNutrition()"><i class="fa fa-save"></i> Save Nutrition</button>
+    </div>
+  </div>
+
+  <!-- GYM PAGE -->
+  <div id="page-gym" class="page">
+    <div class="page-header"><h2>Gym & Physical</h2></div>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showTab('gym','workout')">Workout Log</button>
+      <button class="tab-btn" onclick="showTab('gym','calisthenics')">Calisthenics</button>
+      <button class="tab-btn" onclick="showTab('gym','boxing')">Boxing/MMA</button>
+      <button class="tab-btn" onclick="showTab('gym','skin')">Skin & Glow</button>
+    </div>
+    <div id="gym-workout" class="tab-content active"></div>
+    <div id="gym-calisthenics" class="tab-content"></div>
+    <div id="gym-boxing" class="tab-content"></div>
+    <div id="gym-skin" class="tab-content"></div>
+  </div>
+
+  <!-- HACKING PAGE -->
+  <div id="page-hacking" class="page">
+    <div class="page-header"><h2>Hacking Progress</h2></div>
+    <div class="hack-stats-row">
+      <div class="hack-stat">
+        <input type="number" class="hack-input" id="thmRooms" min="0" max="200" placeholder="0" oninput="saveHackStat()">
+        <div class="hack-stat-label">THM Rooms</div>
+        <div class="mini-bar" style="margin-top:6px"><div class="mini-fill" id="thm-bar" style="width:0%"></div></div>
+        <div style="font-size:11px;color:#888;margin-top:4px;">Target: 50 rooms</div>
+      </div>
+      <div class="hack-stat">
+        <input type="number" class="hack-input" id="pythonProjects" min="0" max="20" placeholder="0" oninput="saveHackStat()">
+        <div class="hack-stat-label">Python Projects</div>
+        <div class="mini-bar" style="margin-top:6px"><div class="mini-fill" id="py-bar" style="background:#60a5fa;width:0%"></div></div>
+        <div style="font-size:11px;color:#888;margin-top:4px;">Target: 5 projects</div>
+      </div>
+      <div class="hack-stat">
+        <input type="number" class="hack-input" id="ctfSolved" min="0" max="100" placeholder="0" oninput="saveHackStat()">
+        <div class="hack-stat-label">CTFs Solved</div>
+      </div>
+      <div class="hack-stat">
+        <input type="number" class="hack-input" id="githubRepos" min="0" max="100" placeholder="0" oninput="saveHackStat()">
+        <div class="hack-stat-label">GitHub Repos</div>
+      </div>
+    </div>
+    <div id="hackingChecklists"></div>
+  </div>
+
+  <!-- READING PAGE -->
+  <div id="page-reading" class="page">
+    <div class="page-header"><h2>Reading Tracker</h2></div>
+    <div class="reading-stats">
+      <div class="r-stat"><div class="r-stat-val" id="booksComplete">0</div><div class="r-stat-label">Books Done</div></div>
+      <div class="r-stat"><div class="r-stat-val" id="totalPages">0</div><div class="r-stat-label">Pages Read</div></div>
+      <div class="r-stat"><div class="r-stat-val" id="readStreak">0</div><div class="r-stat-label">Day Streak</div></div>
+    </div>
+    <div class="quick-log">
+      <button class="btn-primary" onclick="quickAddPages(10)">+10 pages</button>
+      <button class="btn-secondary" onclick="quickAddPages(20)">+20 pages</button>
+      <input type="number" id="customPages" class="small-input" placeholder="Custom" min="1" max="500">
+      <button class="btn-secondary" onclick="quickAddPages(parseInt(document.getElementById('customPages').value)||0)">Add</button>
+    </div>
+    <div id="bookCards"></div>
+  </div>
+
+  <!-- MIND PAGE -->
+  <div id="page-mind" class="page">
+    <div class="page-header"><h2>Mind & IQ</h2></div>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showTab('mind','chess')">Chess</button>
+      <button class="tab-btn" onclick="showTab('mind','models')">Mental Models</button>
+      <button class="tab-btn" onclick="showTab('mind','comm')">Communication</button>
+    </div>
+    <div id="mind-chess" class="tab-content active"></div>
+    <div id="mind-models" class="tab-content"></div>
+    <div id="mind-comm" class="tab-content"></div>
+  </div>
+
+  <!-- MONEY PAGE -->
+  <div id="page-money" class="page">
+    <div class="page-header"><h2>Money Tracker</h2></div>
+    <div class="money-overview">
+      <div class="money-card">
+        <div class="money-label">Total Earned</div>
+        <div class="money-val">₹<span id="totalEarned">0</span></div>
+      </div>
+      <div class="money-card">
+        <div class="money-label">This Month</div>
+        <div class="money-val">₹<span id="monthEarned">0</span></div>
+      </div>
+      <div class="money-card">
+        <div class="money-label">Phase 1 Target</div>
+        <div class="money-val">₹5,000</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1.5rem;">
+      <div class="card-title">Log Income</div>
+      <div class="income-form">
+        <input type="text" id="incomeSource" class="form-input" placeholder="Source (Fiverr, Bug Bounty...)">
+        <input type="number" id="incomeAmount" class="form-input" placeholder="Amount ₹">
+        <select id="incomeCategory" class="form-input">
+          <option>Fiverr</option>
+          <option>Bug Bounty</option>
+          <option>Freelance</option>
+          <option>Trading</option>
+          <option>Other</option>
+        </select>
+        <button class="btn-primary" onclick="addIncome()">Add Income</button>
+      </div>
+    </div>
+    <div id="incomeList" class="card" style="margin-top:1rem;"></div>
+    <div id="moneyChecklists" style="margin-top:1.5rem;"></div>
+  </div>
+
+  <!-- AI SESSION PAGE -->
+  <div id="page-ai" class="page">
+    <div class="page-header"><h2>AI Daily Session</h2></div>
+    <div class="ai-layout">
+      <div class="ai-chat-area">
+        <div class="ai-header">
+          <div>
+            <div style="font-size:15px;font-weight:600;">Daily Coaching Session</div>
+            <div style="font-size:12px;color:#888;" id="aiDate">--</div>
+          </div>
+          <div class="ai-timer" id="aiTimer">30:00</div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="ai-welcome">
+            <div class="ai-bubble">
+              Hey! Ready for today's session? Tell me how your day went — wins, failures, what you did, what you skipped. Be honest. I'm here to help you level up, not to judge. 🔥
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <textarea id="chatInput" class="chat-input" placeholder="Tell me about your day..." rows="2" onkeydown="handleChatKey(event)"></textarea>
+          <button class="send-btn" onclick="sendMessage()"><i class="fa fa-paper-plane"></i></button>
+        </div>
+      </div>
+      <div class="ai-sidebar">
+        <div class="card">
+          <div class="card-title">Groq API Key</div>
+          <input type="password" id="groqKey" class="form-input" placeholder="gsk_... (from console.groq.com)">
+          <button class="btn-secondary" style="margin-top:8px;width:100%;" onclick="saveGroqKey()">Save Key</button>
+          <div style="font-size:11px;color:#888;margin-top:8px;">Free at console.groq.com</div>
+        </div>
+        <div class="card" style="margin-top:1rem;">
+          <div class="card-title">Past Sessions</div>
+          <div id="sessionCalendar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS PAGE -->
+  <div id="page-stats" class="page">
+    <div class="page-header"><h2>Stats & Analytics</h2></div>
+    <div class="stats-summary">
+      <div class="sum-card"><div class="sum-val" id="st-days">0</div><div class="sum-label">Days Tracked</div></div>
+      <div class="sum-card"><div class="sum-val" id="st-streak">0</div><div class="sum-label">Best Streak</div></div>
+      <div class="sum-card"><div class="sum-val" id="st-gym">0</div><div class="sum-label">Gym Sessions</div></div>
+      <div class="sum-card"><div class="sum-val" id="st-books">0</div><div class="sum-label">Books Done</div></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card"><div class="card-title">Daily Habit Completion</div><canvas id="habitChart"></canvas></div>
+      <div class="chart-card"><div class="card-title">Calories (Last 14 Days)</div><canvas id="calChart"></canvas></div>
+      <div class="chart-card"><div class="card-title">Water Intake</div><canvas id="waterChart"></canvas></div>
+      <div class="chart-card"><div class="card-title">Sleep (Last 14 Days)</div><canvas id="sleepChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div id="page-settings" class="page">
+    <div class="page-header"><h2>Settings & Profile</h2></div>
+    <div class="settings-grid">
+      <div class="card">
+        <div class="card-title">Your Profile</div>
+        <div class="setting-group">
+          <label>Name</label>
+          <input type="text" id="set-name" class="form-input" placeholder="Your name">
+        </div>
+        <div class="setting-group">
+          <label>Age</label>
+          <input type="number" id="set-age" class="form-input" value="19">
+        </div>
+        <div class="setting-group">
+          <label>Height</label>
+          <input type="text" id="set-height" class="form-input" value="5'6&quot;">
+        </div>
+        <div class="setting-group">
+          <label>Current Weight (kg)</label>
+          <input type="number" id="set-weight" class="form-input" value="50">
+        </div>
+        <button class="btn-primary" onclick="saveSettings()"><i class="fa fa-save"></i> Save Profile</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Daily Targets</div>
+        <div class="setting-group"><label>Calories</label><input type="number" id="set-cal" class="form-input" value="2500"></div>
+        <div class="setting-group"><label>Protein (g)</label><input type="number" id="set-prot" class="form-input" value="275"></div>
+        <div class="setting-group"><label>Water (L)</label><input type="number" id="set-water" class="form-input" value="4.5" step="0.5"></div>
+        <div class="setting-group"><label>Sleep (hours)</label><input type="number" id="set-sleep" class="form-input" value="8.5" step="0.5"></div>
+        <div class="setting-group"><label>Steps</label><input type="number" id="set-steps" class="form-input" value="10000"></div>
+        <button class="btn-primary" onclick="saveSettings()"><i class="fa fa-save"></i> Save Targets</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Data Management</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn-secondary" onclick="exportData()"><i class="fa fa-download"></i> Export All Data</button>
+          <button class="btn-secondary" onclick="importData()"><i class="fa fa-upload"></i> Import Data</button>
+          <input type="file" id="importFile" accept=".json" style="display:none;" onchange="doImport(event)">
+          <button class="btn-danger" onclick="clearAllData()"><i class="fa fa-trash"></i> Clear All Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/tracker.js"></script>
+<script src="js/nutrition.js"></script>
+<script src="js/gym.js"></script>
+<script src="js/hacking.js"></script>
+<script src="js/reading.js"></script>
+<script src="js/mind.js"></script>
+<script src="js/money.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
