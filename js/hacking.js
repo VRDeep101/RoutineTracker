@@ -317,7 +317,7 @@ Tone: Direct older brother who has achieved what the user wants. Not preachy. No
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + groqKey },
       body: JSON.stringify({
-        model: 'llama3-70b-8192',
+        model: 'llama-3.3-70b-versatile',
         messages: [{ role: 'system', content: systemPrompt }, ...chatHistory],
         max_tokens: 300,
         temperature: 0.85
