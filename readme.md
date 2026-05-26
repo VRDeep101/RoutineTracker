@@ -1,6 +1,7 @@
 # ⚡ GLOW UP OS
 
 Personal transformation dashboard. Runs in your browser. No account. No internet needed.
+Public Link: https://vrdeep101.github.io/RoutineTracker/
 
 ---
 
