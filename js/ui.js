@@ -21,6 +21,8 @@ function showPage(name) {
   if (name === 'ai') loadSessionCalendar();
   if (name === 'dashboard') refreshDashboard();
   if (name === 'stats') refreshStats();
+  if (name === 'gym') renderGymSimple();
+  localStorage.setItem('gu_last_page', name);
 }
 
 function toggleSidebar() {

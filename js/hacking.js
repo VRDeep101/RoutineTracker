@@ -503,10 +503,7 @@ function initApp() {
   renderTracker();
   loadNutritionValues();
   renderMealSections();
-  renderGymWorkout();
-  renderCalisthenics();
-  renderBoxing();
-  renderSkin();
+  renderGymSimple();
   renderHackingChecklists();
   renderBooks();
   renderChess();
@@ -514,6 +511,10 @@ function initApp() {
   renderCommunication();
   renderMoney();
   loadSessionCalendar();
+
+  // Go to last visited page
+  const lastPage = localStorage.getItem('gu_last_page') || 'dashboard';
+  showPage(lastPage);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
