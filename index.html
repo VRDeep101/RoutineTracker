@@ -9,6 +9,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Glow Up OS">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
 </head>
 <body>
 
@@ -285,16 +297,10 @@
   <!-- GYM PAGE -->
   <div id="page-gym" class="page">
     <div class="page-header"><h2>Gym & Physical</h2></div>
-    <div class="tab-bar">
-      <button class="tab-btn active" onclick="showTab('gym','workout')">Workout Log</button>
-      <button class="tab-btn" onclick="showTab('gym','calisthenics')">Calisthenics</button>
-      <button class="tab-btn" onclick="showTab('gym','boxing')">Boxing/MMA</button>
-      <button class="tab-btn" onclick="showTab('gym','skin')">Skin & Glow</button>
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="card-title">This Week — tick what you did each day</div>
+      <div id="gym-workout"></div>
     </div>
-    <div id="gym-workout" class="tab-content active"></div>
-    <div id="gym-calisthenics" class="tab-content"></div>
-    <div id="gym-boxing" class="tab-content"></div>
-    <div id="gym-skin" class="tab-content"></div>
   </div>
 
   <!-- HACKING PAGE -->
@@ -338,21 +344,34 @@
       <button class="btn-secondary" onclick="quickAddPages(20)">+20 pages</button>
       <input type="number" id="customPages" class="small-input" placeholder="Custom" min="1" max="500">
       <button class="btn-secondary" onclick="quickAddPages(parseInt(document.getElementById('customPages').value)||0)">Add</button>
+      <button class="btn-secondary" onclick="showAddBookForm()" style="margin-left:auto;">+ Add Book</button>
     </div>
     <div id="bookCards"></div>
+  </div>
+
+  <!-- ADD BOOK MODAL -->
+  <div id="addBookModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-title">Add Your Book</div>
+      <div class="modal-form">
+        <div><label style="color:var(--text2);font-size:12px;display:block;margin-bottom:6px;">Book Title *</label>
+          <input type="text" id="newBookTitle" class="form-input" placeholder="e.g. Ikigai"></div>
+        <div><label style="color:var(--text2);font-size:12px;display:block;margin-bottom:6px;">Author</label>
+          <input type="text" id="newBookAuthor" class="form-input" placeholder="e.g. Hector Garcia"></div>
+        <div><label style="color:var(--text2);font-size:12px;display:block;margin-bottom:6px;">Total Pages</label>
+          <input type="number" id="newBookPages" class="form-input" placeholder="e.g. 208" min="1"></div>
+        <div style="display:flex;gap:10px;margin-top:0.5rem;">
+          <button class="btn-primary" onclick="addCustomBook()">Add Book</button>
+          <button class="btn-secondary" onclick="hideAddBookForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- MIND PAGE -->
   <div id="page-mind" class="page">
     <div class="page-header"><h2>Mind & IQ</h2></div>
-    <div class="tab-bar">
-      <button class="tab-btn active" onclick="showTab('mind','chess')">Chess</button>
-      <button class="tab-btn" onclick="showTab('mind','models')">Mental Models</button>
-      <button class="tab-btn" onclick="showTab('mind','comm')">Communication</button>
-    </div>
-    <div id="mind-chess" class="tab-content active"></div>
-    <div id="mind-models" class="tab-content"></div>
-    <div id="mind-comm" class="tab-content"></div>
+    <div id="mindContainer"></div>
   </div>
 
   <!-- MONEY PAGE -->
@@ -433,17 +452,47 @@
   <!-- STATS PAGE -->
   <div id="page-stats" class="page">
     <div class="page-header"><h2>Stats & Analytics</h2></div>
-    <div class="stats-summary">
+
+    <!-- NUMBER CARDS -->
+    <div class="stats-summary" style="margin-bottom:1.5rem;">
       <div class="sum-card"><div class="sum-val" id="st-days">0</div><div class="sum-label">Days Tracked</div></div>
-      <div class="sum-card"><div class="sum-val" id="st-streak">0</div><div class="sum-label">Best Streak</div></div>
+      <div class="sum-card"><div class="sum-val" id="st-streak">0</div><div class="sum-label">Streak</div></div>
       <div class="sum-card"><div class="sum-val" id="st-gym">0</div><div class="sum-label">Gym Sessions</div></div>
       <div class="sum-card"><div class="sum-val" id="st-books">0</div><div class="sum-label">Books Done</div></div>
+      <div class="sum-card"><div class="sum-val" id="st-thm">0</div><div class="sum-label">THM Rooms</div></div>
+      <div class="sum-card"><div class="sum-val" id="st-skills">0</div><div class="sum-label">Skills Logged</div></div>
+      <div class="sum-card"><div class="sum-val" id="st-income">&#8377;0</div><div class="sum-label">Total Earned</div></div>
     </div>
+
+    <!-- CIRCLE PROGRESS -->
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-title">Overall Progress</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1.5rem;text-align:center;">
+        <div>
+          <canvas id="circle-habits" width="140" height="140"></canvas>
+          <div style="font-size:13px;color:var(--text2);margin-top:6px;">Habit Avg (30d)</div>
+        </div>
+        <div>
+          <canvas id="circle-hack" width="140" height="140"></canvas>
+          <div style="font-size:13px;color:var(--text2);margin-top:6px;">Hacking (50 rooms)</div>
+        </div>
+        <div>
+          <canvas id="circle-books" width="140" height="140"></canvas>
+          <div style="font-size:13px;color:var(--text2);margin-top:6px;">Books (10 target)</div>
+        </div>
+        <div>
+          <canvas id="circle-gym" width="140" height="140"></canvas>
+          <div style="font-size:13px;color:var(--text2);margin-top:6px;">Gym (24 weeks)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINE/BAR CHARTS -->
     <div class="charts-grid">
-      <div class="chart-card"><div class="card-title">Daily Habit Completion</div><canvas id="habitChart"></canvas></div>
-      <div class="chart-card"><div class="card-title">Calories (Last 14 Days)</div><canvas id="calChart"></canvas></div>
-      <div class="chart-card"><div class="card-title">Water Intake</div><canvas id="waterChart"></canvas></div>
-      <div class="chart-card"><div class="card-title">Sleep (Last 14 Days)</div><canvas id="sleepChart"></canvas></div>
+      <div class="chart-card"><div class="card-title">Habit Completion % (14 days)</div><canvas id="habitChart"></canvas></div>
+      <div class="chart-card"><div class="card-title">Calories (14 days)</div><canvas id="calChart"></canvas></div>
+      <div class="chart-card"><div class="card-title">Water Intake (14 days)</div><canvas id="waterChart"></canvas></div>
+      <div class="chart-card"><div class="card-title">Sleep Hours (14 days)</div><canvas id="sleepChart"></canvas></div>
     </div>
   </div>
 

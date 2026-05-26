@@ -22,6 +22,7 @@ function showPage(name) {
   if (name === 'dashboard') refreshDashboard();
   if (name === 'stats') refreshStats();
   if (name === 'gym') renderGymSimple();
+  if (name === 'mind') renderMindPage();
   localStorage.setItem('gu_last_page', name);
 }
 
